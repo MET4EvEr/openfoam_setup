@@ -13,10 +13,15 @@ setlocal
 cd /d "%~dp0"
 
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0scripts\start_openfoam.ps1"
+if errorlevel 1 goto :error
+goto :end
 
-if %ERRORLEVEL% neq 0 (
-    echo.
-    echo Script encountered an error (Exit Code: %ERRORLEVEL%).
-    pause
-)
+:error
+echo.
+echo ====================================================================
+echo  OpenFOAM launcher encountered an error.
+echo ====================================================================
+pause
+
+:end
 endlocal

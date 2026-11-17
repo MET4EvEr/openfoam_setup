@@ -24,17 +24,36 @@ Write-Host "====================================================================
 # 1. Verify Docker Daemon is Running
 # ------------------------------------------------------------------------------
 Write-Host -NoNewline "Checking Docker daemon status... "
+$dockerRunning = $false
+$dockerVersion = ""
 try {
-    $null = docker info 2>&1
-    Write-Host "[RUNNING]" -ForegroundColor Green
+    # Check if Docker daemon is running by querying ServerVersion.
+    # Note: Silencing stderr prevents PowerShell from treating non-fatal kernel/driver
+    # warnings (e.g. blkio throttle warnings on WSL2) as terminating errors.
+    $prevEAP = $ErrorActionPreference
+    $ErrorActionPreference = "SilentlyContinue"
+    $dockerVersion = (& docker info --format "{{.ServerVersion}}" 2>$null)
+    if ($LASTEXITCODE -eq 0 -and $dockerVersion) {
+        $dockerRunning = $true
+    }
+    $ErrorActionPreference = $prevEAP
 } catch {
+    $dockerRunning = $false
+}
+
+if ($dockerRunning) {
+    Write-Host "[RUNNING]" -ForegroundColor Green -NoNewline
+    Write-Host " (Docker Server v$dockerVersion)"
+} else {
     Write-Host "[FAILED]" -ForegroundColor Red
     Write-Host ""
     Write-Host "Error: Docker Desktop is not running or not accessible." -ForegroundColor Red
     Write-Host "Please start Docker Desktop on your machine and wait until it finishes starting."
     Write-Host "Download Docker Desktop: https://www.docker.com/products/docker-desktop"
     Write-Host ""
-    exit 1
+    Write-Host "Press any key to close this window..." -ForegroundColor Gray
+    try { $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown") } catch {}
+    [System.Environment]::Exit(1)
 }
 
 # ------------------------------------------------------------------------------
@@ -102,7 +121,10 @@ docker compose up -d --build
 
 if ($LASTEXITCODE -ne 0) {
     Write-Host "Failed to start Docker Compose service." -ForegroundColor Red
-    exit $LASTEXITCODE
+    Write-Host ""
+    Write-Host "Press any key to close this window..." -ForegroundColor Gray
+    try { $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown") } catch {}
+    [System.Environment]::Exit($LASTEXITCODE)
 }
 
 # ------------------------------------------------------------------------------
@@ -122,3 +144,8 @@ Write-Host "--------------------------------------------------------------------
 
 # Execute interactive bash session inside the running container
 docker compose exec openfoam bash
+
+Write-Host ""
+Write-Host "OpenFOAM shell session ended." -ForegroundColor Cyan
+Write-Host "The container is still running in the background." -ForegroundColor Gray
+Write-Host "To shut down the container completely, run: .\stop_openfoam.bat" -ForegroundColor Gray

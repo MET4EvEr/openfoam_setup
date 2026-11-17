@@ -12,10 +12,15 @@ setlocal
 cd /d "%~dp0"
 
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0scripts\open_paraview.ps1" %*
+if errorlevel 1 goto :error
+goto :end
 
-if %ERRORLEVEL% neq 0 (
-    echo.
-    echo Failed to open ParaView (Exit Code: %ERRORLEVEL%).
-    pause
-)
+:error
+echo.
+echo ====================================================================
+echo  Failed to launch ParaView.
+echo ====================================================================
+pause
+
+:end
 endlocal
