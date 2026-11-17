@@ -1,0 +1,96 @@
+# ==============================================================================
+# Git Ignore Configuration for OpenFOAM Course Environment
+# ==============================================================================
+#
+# PURPOSE:
+# Keeps the repository clean by ignoring local configuration secrets, compiled
+# Python artifacts, OS metadata, and generated simulation output, while ensuring
+# foundational course cases (like test_cavity) remain tracked.
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# 1. Environment and Local Host Configurations
+# ------------------------------------------------------------------------------
+# Never commit the active .env file (it contains host-specific absolute paths)
+.env
+!.env.example
+
+# ------------------------------------------------------------------------------
+# 2. Python Virtual Environments and Caches
+# ------------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+env/
+venv/
+.pytest_cache/
+.coverage
+htmlcov/
+.uv/
+uv.lock
+
+# ------------------------------------------------------------------------------
+# 3. Operating System Metadata
+# ------------------------------------------------------------------------------
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+.directory
+
+# ------------------------------------------------------------------------------
+# 4. Code Editors & IDEs
+# ------------------------------------------------------------------------------
+.vscode/
+!.vscode/settings.json.example
+.idea/
+*.swp
+*.swo
+*.sublime-project
+*.sublime-workspace
+
+# ------------------------------------------------------------------------------
+# 5. OpenFOAM Simulation Artifacts
+# ------------------------------------------------------------------------------
+# Solver log files
+log.*
+*.log
+
+# Marker files for ParaView
+*.foam
+
+# Keep the foundational test cavity case tracked in version control!
+!openfoam_course_workspace/test_cavity/
+!openfoam_course_workspace/test_cavity/**
+
+# Ignore simulation result time-step directories generated during runs
+# (e.g. 0.005, 0.1, 1, 2, etc.), while preserving the initial condition folder '0/'
+openfoam_course_workspace/test_cavity/[0-9]*.*[0-9]
+openfoam_course_workspace/test_cavity/[1-9]*
+openfoam_course_workspace/test_cavity/postProcessing/
+openfoam_course_workspace/test_cavity/dynamicCode/
+openfoam_course_workspace/test_cavity/residuals.png
+openfoam_course_workspace/test_cavity/log.*
+openfoam_course_workspace/test_cavity/*.foam
+
+# But explicitly ensure initial condition 0/ and configuration are tracked
+!openfoam_course_workspace/test_cavity/0/
+!openfoam_course_workspace/test_cavity/0/**
+!openfoam_course_workspace/test_cavity/constant/
+!openfoam_course_workspace/test_cavity/constant/**
+!openfoam_course_workspace/test_cavity/system/
+!openfoam_course_workspace/test_cavity/system/**
+!openfoam_course_workspace/test_cavity/run_test.sh
+!openfoam_course_workspace/test_cavity/plot_residuals.py

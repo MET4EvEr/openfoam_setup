@@ -1,0 +1,57 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  Course Environment Production Standard
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    format      ascii;
+    class       volScalarField;
+    object      p;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// WHAT IS THIS FILE?
+// This file defines the initial condition and boundary conditions for pressure (p).
+//
+// INCOMPRESSIBLE PRESSURE NOTE:
+// In incompressible solvers like icoFoam, the fluid density (rho) is constant.
+// OpenFOAM works with "kinematic pressure", defined as p_kinematic = p / rho.
+//
+// DIMENSIONS BREAKDOWN:
+// OpenFOAM represents physical units using a 7-element dimension list:
+//   [Mass, Length, Time, Temperature, Quantity, Current, Luminous Intensity]
+// Here: [0 2 -2 0 0 0 0] corresponds to (m^2 / s^2) because:
+//   p (Pa = kg / (m * s^2)) divided by rho (kg / m^3) = m^2 / s^2.
+
+dimensions      [0 2 -2 0 0 0 0];
+
+// Initial pressure throughout the entire fluid interior at time t = 0
+internalField   uniform 0;
+
+boundaryField
+{
+    // The top moving boundary ("the lid")
+    // zeroGradient means the normal gradient of pressure at the wall is zero (dp/dn = 0)
+    movingWall
+    {
+        type            zeroGradient;
+    }
+
+    // The stationary sides and bottom of the square cavity
+    fixedWalls
+    {
+        type            zeroGradient;
+    }
+
+    // Front and back boundaries (normal to the z-axis)
+    // 'empty' tells OpenFOAM that this is a 2D problem: no equations are solved along z.
+    frontAndBack
+    {
+        type            empty;
+    }
+}
+
+// ************************************************************************* //

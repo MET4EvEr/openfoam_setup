@@ -1,0 +1,31 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  Course Environment Production Standard
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      physicalProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// WHAT IS THIS FILE?
+// In newer OpenFOAM Foundation releases (v9, v10, v11+), physical and transport
+// properties are specified in 'physicalProperties'.
+// Providing both transportProperties and physicalProperties guarantees 100%
+// seamless compatibility across both OpenFOAM Foundation (.org) and ESI-OpenCFD (.com)
+// distributions without any solver crashes.
+//
+// REYNOLDS NUMBER (Re):
+//   Re = (U * L) / nu = (1.0 m/s * 0.1 m) / 0.01 m^2/s = 10 (Laminar flow)
+
+viscosityModel  Newtonian;
+
+nu              [0 2 -1 0 0 0 0] 0.01;
+
+// ************************************************************************* //

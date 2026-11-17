@@ -1,0 +1,58 @@
+# ==============================================================================
+# Docker Compose Orchestration for OpenFOAM Course Environment
+# ==============================================================================
+#
+# PURPOSE:
+# Defines the multi-arch OpenFOAM + Python simulation container with proper
+# volume mappings, shared memory allocations, and host-user permission matching.
+#
+# USAGE:
+#   docker compose up -d --build   (Start container in background)
+#   docker compose exec openfoam bash (Enter interactive OpenFOAM shell)
+#   docker compose down            (Stop container safely)
+# ==============================================================================
+
+services:
+  openfoam:
+    # Build container image from the local Dockerfile
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    # Fixed container name for easy identification and shell execution
+    container_name: openfoam_course
+
+    # Allocate 2GB of POSIX shared memory (/dev/shm).
+    # OpenFOAM parallel solvers using OpenMPI (decomposePar, mpirun) pass large
+    # halo cell buffers between cores in shared memory. Docker's default 64MB
+    # shared memory limit will cause OpenMPI bus error crashes on medium/large meshes.
+    shm_size: '2gb'
+
+    # Map the container user and group to match the host user.
+    # Reads HOST_UID and HOST_GID from .env (falling back to 1000:1000).
+    # This prevents files generated inside the container (results, logs, meshes)
+    # from becoming owned by root on Linux/macOS host machines.
+    user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
+
+    # Volume mapping:
+    # Mounts the host workspace folder to /workspace inside the container.
+    # Any edits made on your computer are instantly reflected in Docker, and
+    # all simulation outputs are saved directly to your host hard drive.
+    volumes:
+      - ./openfoam_course_workspace:/workspace
+
+    # Environment settings passed into the container
+    environment:
+      # Ensures Matplotlib runs without an X11 display server
+      - MPLBACKEND=Agg
+      # Keeps uv virtual environment active on standard PATH
+      - PATH=/opt/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+      # Home directory permission safety for non-root users
+      - HOME=/tmp/openfoam_home
+
+    # Keep container running in the background for interactive exec sessions
+    stdin_open: true
+    tty: true
+
+    # Clean shutdown handling
+    restart: unless-stopped

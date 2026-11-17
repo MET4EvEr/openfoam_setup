@@ -1,0 +1,66 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  Course Environment Production Standard
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      fvSchemes;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// WHAT IS THIS FILE?
+// fvSchemes sets the numerical finite-volume discretization schemes for every
+// mathematical term in the Navier-Stokes differential equations:
+//   - ddtSchemes:       Time derivative (d/dt)
+//   - gradSchemes:      Spatial gradient (nabla)
+//   - divSchemes:       Divergence / Convective flux terms (nabla . (rho*U*phi))
+//   - laplacianSchemes: Diffusion / Viscous terms (nabla . (nu * nabla U))
+//   - snGradSchemes:    Surface-normal gradients at cell faces
+
+// Time derivative: First-order implicit Euler scheme (robust, bounded, stable)
+ddtSchemes
+{
+    default         Euler;
+}
+
+// Spatial gradient terms: Standard second-order Gaussian integration with linear interpolation
+gradSchemes
+{
+    default         Gauss linear;
+    grad(p)         Gauss linear;
+}
+
+// Convective / Divergence terms:
+// div(phi,U) represents momentum convection (fluid carrying fluid momentum)
+divSchemes
+{
+    default         none;
+    div(phi,U)      Gauss linear;
+}
+
+// Laplacian / Diffusion terms:
+// Orthogonal correction is used since the hex mesh is perfectly rectangular and orthogonal
+laplacianSchemes
+{
+    default         Gauss linear orthogonal;
+}
+
+// Face interpolation schemes: Linear interpolation from cell centers to faces
+interpolationSchemes
+{
+    default         linear;
+}
+
+// Surface-normal gradient calculation: Orthogonal (exact for cartesian grid)
+snGradSchemes
+{
+    default         orthogonal;
+}
+
+// ************************************************************************* //

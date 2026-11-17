@@ -1,0 +1,55 @@
+# ==============================================================================
+# Python Project Configuration for OpenFOAM Course Environment
+# ==============================================================================
+#
+# PURPOSE:
+# Standard PEP 621 compliant package specification used by `uv` to create a
+# reproducible, high-performance Python virtual environment pre-baked into the
+# Docker container at /opt/venv.
+#
+# WHY uv?
+# Astral `uv` installs and resolves Python packages 10x-100x faster than pip,
+# requires zero compilation overhead, and manages isolated virtual environments
+# cleanly without polluting the host-mounted /workspace directory.
+# ==============================================================================
+
+[project]
+name = "openfoam-course-env"
+version = "1.0.0"
+description = "High-performance Python CFD post-processing environment for OpenFOAM"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [
+    { name = "OpenFOAM Course Infrastructure Team" }
+]
+keywords = ["openfoam", "cfd", "fluid-dynamics", "scientific-computing", "post-processing"]
+
+# ------------------------------------------------------------------------------
+# Core CFD Dependencies & Roles
+# ------------------------------------------------------------------------------
+dependencies = [
+    # numpy:
+    # Essential for high-speed numerical array manipulations, tensor mathematics,
+    # spatial coordinate transformations, and velocity vector algebra.
+    "numpy>=1.24.0",
+
+    # pandas:
+    # Essential for ingesting, filtering, aggregating, and structuring simulation
+    # log data (solver residual histories, force/moment coefficients, time series).
+    "pandas>=2.0.0",
+
+    # matplotlib:
+    # Essential for generating 2D publication-quality convergence residual plots,
+    # velocity profile boundary-layer comparisons, and probe time-series plots.
+    # Note: Pre-configured to use the headless 'Agg' backend to avoid X11 errors.
+    "matplotlib>=3.7.0",
+
+    # foamlib:
+    # A modern Python library designed specifically to read, write, parse, and
+    # manipulate native OpenFOAM case dictionaries, mesh definitions, and field files.
+    "foamlib>=0.3.0",
+]
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"

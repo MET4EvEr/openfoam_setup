@@ -1,0 +1,46 @@
+# ==============================================================================
+# Git Attributes Configuration for OpenFOAM Course Environment
+# ==============================================================================
+#
+# PURPOSE:
+# This file enforces Linux-style LF (Line Feed, '\n') line endings across all
+# platforms (Windows, macOS, Linux).
+#
+# WHY THIS IS CRITICAL FOR OPENFOAM & DOCKER:
+# 1. Linux containers cannot execute bash scripts with Windows CRLF ('\r\n')
+#    endings. CRLF triggers errors like "/usr/bin/env: 'bash\r': No such file
+#    or directory".
+# 2. OpenFOAM dictionary parsers are strictly Linux-native. Windows carriage
+#    return characters inside case dictionaries (0/, constant/, system/)
+#    can cause cryptic parsing and tokenization errors.
+# ==============================================================================
+
+# Default rule: Auto-detect text files and normalize line endings on checkout
+* text=auto eol=lf
+
+# Explicitly enforce LF line endings on all shell and script files
+*.sh text eol=lf
+*.bash text eol=lf
+*.py text eol=lf
+*.toml text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+Dockerfile text eol=lf
+docker-entrypoint.sh text eol=lf
+
+# Windows batch and PowerShell scripts must keep CRLF if executed directly on Windows
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# OpenFOAM case dictionaries and data files inside the workspace
+# Enforce LF endings unconditionally for all OpenFOAM files
+openfoam_course_workspace/** text eol=lf
+openfoam_course_workspace/**/* text eol=lf
+
+# Binary files - do not touch line endings
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.pdf binary
+*.foam text eol=lf
