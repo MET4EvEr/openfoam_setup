@@ -76,13 +76,21 @@ RUN uv sync --no-install-project && \
     chmod -R 777 /opt/venv /tmp/uv-cache /opt/python-env
 
 # ------------------------------------------------------------------------------
-# 5. Setup Safe OpenFOAM Entrypoint
+# 5. System-wide OpenFOAM Environment Setup
+# ------------------------------------------------------------------------------
+# Auto-source OpenFOAM in all interactive and login bash shells so commands like
+# blockMesh, checkMesh, and icoFoam are always on PATH without manual sourcing
+RUN echo 'for rc in /usr/lib/openfoam/openfoam*/etc/bashrc /opt/openfoam*/etc/bashrc /opt/OpenFOAM/OpenFOAM-*/etc/bashrc; do if [ -f "$rc" ]; then set +eu; . "$rc"; set -e; break; fi; done' >> /etc/bash.bashrc && \
+    echo 'for rc in /usr/lib/openfoam/openfoam*/etc/bashrc /opt/openfoam*/etc/bashrc /opt/OpenFOAM/OpenFOAM-*/etc/bashrc; do if [ -f "$rc" ]; then set +eu; . "$rc"; set -e; break; fi; done' >> /etc/profile
+
+# ------------------------------------------------------------------------------
+# 6. Setup Safe OpenFOAM Entrypoint
 # ------------------------------------------------------------------------------
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 # ------------------------------------------------------------------------------
-# 6. Configure Workspace and Execution Defaults
+# 7. Configure Workspace and Execution Defaults
 # ------------------------------------------------------------------------------
 # Set the default working directory to the host-mounted workspace
 WORKDIR /workspace

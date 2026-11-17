@@ -94,3 +94,8 @@ openfoam_course_workspace/test_cavity/*.foam
 !openfoam_course_workspace/test_cavity/system/**
 !openfoam_course_workspace/test_cavity/run_test.sh
 !openfoam_course_workspace/test_cavity/plot_residuals.py
+openfoam_course_workspace/test_cavity/constant/polyMesh/boundary
+openfoam_course_workspace/test_cavity/constant/polyMesh/faces
+openfoam_course_workspace/test_cavity/constant/polyMesh/neighbour
+openfoam_course_workspace/test_cavity/constant/polyMesh/owner
+openfoam_course_workspace/test_cavity/constant/polyMesh/points

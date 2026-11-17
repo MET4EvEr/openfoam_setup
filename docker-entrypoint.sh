@@ -14,8 +14,8 @@
 # Therefore, we MUST disable immediate error exiting with 'set +e' while sourcing.
 # ==============================================================================
 
-# Disable immediate exit on error during OpenFOAM environment loading
-set +e
+# Disable immediate exit on error and unbound variable checking during OpenFOAM loading
+set +eu
 
 # Locate and source the OpenFOAM environment file (etc/bashrc).
 # Different OpenFOAM distributions (OpenCFD, Foundation, microfluidica) place

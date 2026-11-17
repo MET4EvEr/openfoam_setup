@@ -142,8 +142,8 @@ Write-Host ""
 Write-Host "Type 'exit' whenever you want to return to your Windows terminal."
 Write-Host "--------------------------------------------------------------------"
 
-# Execute interactive bash session inside the running container
-docker compose exec openfoam bash
+# Execute interactive login bash session inside the running container
+docker compose exec openfoam bash -l
 
 Write-Host ""
 Write-Host "OpenFOAM shell session ended." -ForegroundColor Cyan

@@ -124,5 +124,5 @@ echo ""
 echo "Type 'exit' whenever you want to return to your host terminal."
 echo "--------------------------------------------------------------------"
 
-# Execute interactive bash session inside the running container
-docker compose exec openfoam bash
+# Execute interactive login bash session inside the running container
+docker compose exec openfoam bash -l

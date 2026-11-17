@@ -45,8 +45,6 @@ services:
     environment:
       # Ensures Matplotlib runs without an X11 display server
       - MPLBACKEND=Agg
-      # Keeps uv virtual environment active on standard PATH
-      - PATH=/opt/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
       # Home directory permission safety for non-root users
       - HOME=/tmp/openfoam_home
 

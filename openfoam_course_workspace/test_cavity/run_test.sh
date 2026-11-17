@@ -25,6 +25,29 @@ C_BLUE="\033[1;34m"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR"
 
+# ------------------------------------------------------------------------------
+# STEP 0: Ensure OpenFOAM Environment is Active
+# ------------------------------------------------------------------------------
+# In Docker subshells or non-login executions, OpenFOAM variables might not be loaded.
+# This guard automatically locates and sources the OpenFOAM bashrc if blockMesh is not in PATH.
+if ! command -v blockMesh >/dev/null 2>&1; then
+    for rc in /usr/lib/openfoam/openfoam*/etc/bashrc /opt/openfoam*/etc/bashrc /opt/OpenFOAM/OpenFOAM-*/etc/bashrc; do
+        if [ -f "$rc" ]; then
+            set +eu
+            # shellcheck source=/dev/null
+            source "$rc"
+            set -eu
+            break
+        fi
+    done
+fi
+
+if ! command -v blockMesh >/dev/null 2>&1; then
+    echo -e "\033[1;31mError: OpenFOAM environment could not be found or loaded!\033[0m"
+    echo "Expected OpenFOAM bashrc in /usr/lib/openfoam/ or /opt/openfoam/"
+    exit 1
+fi
+
 echo -e "${C_CYAN}====================================================================${C_RESET}"
 echo -e "${C_CYAN}  Step-by-Step OpenFOAM Simulation: 2D Lid-Driven Cavity Flow        ${C_RESET}"
 echo -e "${C_CYAN}====================================================================${C_RESET}"
