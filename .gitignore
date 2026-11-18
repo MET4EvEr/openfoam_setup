@@ -62,40 +62,70 @@ $RECYCLE.BIN/
 *.sublime-workspace
 
 # ------------------------------------------------------------------------------
-# 5. OpenFOAM Simulation Artifacts
+# 5. OpenFOAM Simulation Artifacts & Solver Output (All Cases)
 # ------------------------------------------------------------------------------
-# Solver log files
+# Solver log files (e.g. log, log.blockMesh, log.icoFoam, simpleFoam.log)
+log
 log.*
 *.log
+
+# Convergence residual plots
+residuals.png
+**/residuals.png
+residuals_*.png
+**/residuals_*.png
 
 # Marker files for ParaView
 *.foam
 
-# Keep the foundational test cavity case tracked in version control!
-!openfoam_course_workspace/test_cavity/
-!openfoam_course_workspace/test_cavity/**
+# Post-processing outputs and dynamic code compilation
+postProcessing/
+**/postProcessing/
+dynamicCode/
+**/dynamicCode/
 
-# Ignore simulation result time-step directories generated during runs
-# (e.g. 0.005, 0.1, 1, 2, etc.), while preserving the initial condition folder '0/'
-openfoam_course_workspace/test_cavity/[0-9]*.*[0-9]
-openfoam_course_workspace/test_cavity/[1-9]*
-openfoam_course_workspace/test_cavity/postProcessing/
-openfoam_course_workspace/test_cavity/dynamicCode/
-openfoam_course_workspace/test_cavity/residuals.png
-openfoam_course_workspace/test_cavity/log.*
-openfoam_course_workspace/test_cavity/*.foam
+# VTK visualization exports (foamToVTK)
+VTK/
+**/VTK/
+**/VTK/**
+vtk/
+**/vtk/
+**/vtk/**
+*.vtm.series
+*.vtm
+*.vtu
+*.vtp
+*.vtk
 
-# But explicitly ensure initial condition 0/ and configuration are tracked
-!openfoam_course_workspace/test_cavity/0/
-!openfoam_course_workspace/test_cavity/0/**
-!openfoam_course_workspace/test_cavity/constant/
-!openfoam_course_workspace/test_cavity/constant/**
-!openfoam_course_workspace/test_cavity/system/
-!openfoam_course_workspace/test_cavity/system/**
-!openfoam_course_workspace/test_cavity/run_test.sh
-!openfoam_course_workspace/test_cavity/plot_residuals.py
-openfoam_course_workspace/test_cavity/constant/polyMesh/boundary
-openfoam_course_workspace/test_cavity/constant/polyMesh/faces
-openfoam_course_workspace/test_cavity/constant/polyMesh/neighbour
-openfoam_course_workspace/test_cavity/constant/polyMesh/owner
-openfoam_course_workspace/test_cavity/constant/polyMesh/points
+# Parallel decomposition processor directories (e.g. processor0, processor1)
+processor*/
+**/processor*/
+
+# Jupyter notebook checkpoints
+.ipynb_checkpoints/
+**/.ipynb_checkpoints/
+
+# ------------------------------------------------------------------------------
+# 6. Generated Mesh Files in polyMesh
+# ------------------------------------------------------------------------------
+# Ignore polyMesh directory and all its contents across all cases
+polyMesh/
+**/polyMesh/
+**/polyMesh/**
+
+# ------------------------------------------------------------------------------
+# 7. Time-Step Result Directories (All Cases)
+# ------------------------------------------------------------------------------
+# Ignore time step folders starting with positive digits (e.g., 1/, 2/, 100/)
+openfoam_course_workspace/**/[1-9]*/
+# Ignore decimal time step folders (e.g., 0.1/, 0.005/, 1.5/)
+openfoam_course_workspace/**/0.*[0-9]*/
+openfoam_course_workspace/**/[0-9]*.*[0-9]*/
+# Ignore scientific notation time step folders (e.g., 1e-05/, 5e-06/)
+openfoam_course_workspace/**/[0-9]*e[+-]*/
+
+# Explicitly ensure the initial condition folder '0/' and '0.orig/' are ALWAYS tracked!
+!openfoam_course_workspace/**/0/
+!openfoam_course_workspace/**/0/**
+!openfoam_course_workspace/**/0.orig/
+!openfoam_course_workspace/**/0.orig/**

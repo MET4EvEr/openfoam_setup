@@ -25,6 +25,12 @@ solvers
         relTol          0;
     }
 
+    pFinal
+    {
+        $p;
+        relTol          0;
+    }
+
     U
     {
         solver          PBiCG;
