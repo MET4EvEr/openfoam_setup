@@ -7,9 +7,8 @@
 # 1. Validates that Docker daemon is running.
 # 2. Ensures local .env configuration exists (auto-creating from .env.example).
 # 3. Dynamically exports host UID/GID for seamless Linux/macOS file permissions.
-# 4. Probes for local ParaView installation and gives helpful status feedback.
-# 5. Starts or rebuilds the Docker container in the background.
-# 6. Attaches the user into an interactive shell inside /workspace.
+# 4. Starts or rebuilds the Docker container in the background.
+# 5. Attaches the user into an interactive shell inside /workspace.
 # ==============================================================================
 
 set -euo pipefail
@@ -69,48 +68,14 @@ else
 fi
 
 # ------------------------------------------------------------------------------
-# 3. Detect and Validate ParaView
-# ------------------------------------------------------------------------------
-PARAVIEW_DETECTED=""
-CONFIGURED_PARAVIEW="$(grep "^PARAVIEW_PATH=" .env | cut -d'=' -f2- | tr -d '"' | tr -d "'" || true)"
-
-if [ -n "$CONFIGURED_PARAVIEW" ] && [ -x "$CONFIGURED_PARAVIEW" ]; then
-    PARAVIEW_DETECTED="$CONFIGURED_PARAVIEW"
-else
-    # Auto-detection search paths for macOS and Linux
-    if [ "$(uname)" = "Darwin" ]; then
-        # Check macOS Applications
-        for app in /Applications/ParaView*.app/Contents/MacOS/paraview; do
-            if [ -x "$app" ]; then
-                PARAVIEW_DETECTED="$app"
-                break
-            fi
-        done
-    elif [ "$(uname)" = "Linux" ]; then
-        if command -v paraview >/dev/null 2>&1; then
-            PARAVIEW_DETECTED="$(command -v paraview)"
-        fi
-    fi
-fi
-
-if [ -n "$PARAVIEW_DETECTED" ]; then
-    echo -e "Host ParaView: ${COLOR_GREEN}[OK]${COLOR_RESET} (${PARAVIEW_DETECTED})"
-else
-    echo -e "Host ParaView: ${COLOR_YELLOW}[WARNING]${COLOR_RESET} Not detected in standard paths."
-    echo -e "  ${COLOR_YELLOW}-> You can still run simulations without ParaView!${COLOR_RESET}"
-    echo "  -> To view 3D meshes and flow fields, install ParaView from https://www.paraview.org/download/"
-    echo "     and optionally set PARAVIEW_PATH in .env"
-fi
-
-# ------------------------------------------------------------------------------
-# 4. Start Container with Docker Compose
+# 3. Start Container with Docker Compose
 # ------------------------------------------------------------------------------
 echo ""
 echo "Building / Starting OpenFOAM container service..."
 docker compose up -d --build
 
 # ------------------------------------------------------------------------------
-# 5. Welcome Banner & Drop into Interactive Shell
+# 4. Welcome Banner & Drop into Interactive Shell
 # ------------------------------------------------------------------------------
 echo ""
 echo -e "${COLOR_GREEN}====================================================================${COLOR_RESET}"

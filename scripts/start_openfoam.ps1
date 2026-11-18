@@ -68,52 +68,7 @@ if (-not (Test-Path $EnvFile)) {
 }
 
 # ------------------------------------------------------------------------------
-# 3. Detect and Validate Local ParaView Installation
-# ------------------------------------------------------------------------------
-$ParaviewPath = $null
-
-# Read existing configuration if present
-if (Test-Path $EnvFile) {
-    Get-Content $EnvFile | ForEach-Object {
-        if ($_ -match "^\s*PARAVIEW_PATH\s*=\s*(.*)$") {
-            $val = $matches[1].Trim().Trim('"').Trim("'")
-            if ($val -ne "" -and (Test-Path $val)) {
-                $ParaviewPath = $val
-            }
-        }
-    }
-}
-
-# Auto-detect if not configured or invalid
-if (-not $ParaviewPath) {
-    $searchPatterns = @(
-        "C:\Program Files\ParaView*\bin\paraview.exe",
-        "C:\Program Files (x86)\ParaView*\bin\paraview.exe"
-    )
-    foreach ($pattern in $searchPatterns) {
-        $matches = Get-Item -Path $pattern -ErrorAction SilentlyContinue | Sort-Object Name -Descending
-        if ($matches -and $matches.Count -gt 0) {
-            $ParaviewPath = $matches[0].FullName
-            break
-        }
-    }
-}
-
-if ($ParaviewPath) {
-    Write-Host "Host ParaView: " -NoNewline
-    Write-Host "[OK]" -ForegroundColor Green -NoNewline
-    Write-Host " ($ParaviewPath)"
-} else {
-    Write-Host "Host ParaView: " -NoNewline
-    Write-Host "[WARNING]" -ForegroundColor Yellow -NoNewline
-    Write-Host " Not detected in standard Program Files paths."
-    Write-Host "  -> You can still run all simulations inside Docker without ParaView!" -ForegroundColor Yellow
-    Write-Host "  -> To view 3D results locally, download ParaView from https://www.paraview.org/download/"
-    Write-Host "     and set PARAVIEW_PATH in your .env file."
-}
-
-# ------------------------------------------------------------------------------
-# 4. Start Container with Docker Compose
+# 3. Start Container with Docker Compose
 # ------------------------------------------------------------------------------
 Write-Host ""
 Write-Host "Building / Starting OpenFOAM container service..." -ForegroundColor Gray
@@ -128,7 +83,7 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 # ------------------------------------------------------------------------------
-# 5. Welcome Banner & Drop into Interactive Shell
+# 4. Welcome Banner & Drop into Interactive Shell
 # ------------------------------------------------------------------------------
 Write-Host ""
 Write-Host "====================================================================" -ForegroundColor Green

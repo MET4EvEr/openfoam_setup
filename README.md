@@ -17,8 +17,8 @@ It combines:
 |                              (Windows 10/11, macOS, or Linux)                            |
 +-----------------------------------------------------------------------------------------+
        |                                                                   |
-       |  1. Launches container via start_openfoam.bat/.sh                 |  3. Inspects 3D results
-       v                                                                   v     via open_paraview.bat/.sh
+       |  1. Launches container via start_openfoam.bat/.sh                 |  3. Opens ParaView manually
+       v                                                                   v     (File -> Open *.foam)
 +--------------------------------------------------+        +-----------------------------+
 |              DOCKER ENGINE / DESKTOP             |        |    NATIVE HOST PARAVIEW     |
 |                                                  |        |   (GPU Hardware Accelerated)|
@@ -64,18 +64,15 @@ It combines:
 | File / Directory | Platform / Component | Purpose & Description |
 | :--- | :--- | :--- |
 | `start_openfoam.bat` | Windows | One-click Windows launcher (delegates to PowerShell engine). |
-| `scripts/start_openfoam.ps1` | Windows (PowerShell) | Validates Docker, auto-detects ParaView, starts container, enters shell. |
-| `start_openfoam.sh` | macOS / Linux | One-click bash launcher with auto-detection and UID/GID mapping. |
+| `scripts/start_openfoam.ps1` | Windows (PowerShell) | Validates Docker, starts container, enters interactive shell. |
+| `start_openfoam.sh` | macOS / Linux | One-click bash launcher with Docker validation and UID/GID mapping. |
 | `stop_openfoam.bat` | Windows | Safely stops and shuts down the Docker container. |
 | `stop_openfoam.sh` | macOS / Linux | Safely stops and shuts down the Docker container. |
-| `open_paraview.bat` | Windows | One-click script to launch native ParaView and load case results. |
-| `scripts/open_paraview.ps1` | Windows (PowerShell) | PowerShell engine that locates `paraview.exe` and passes `.foam` file. |
-| `open_paraview.sh` | macOS / Linux | Bash script to launch host ParaView and load case results. |
 | `Dockerfile` | Docker | Multi-arch recipe with headless OpenFOAM and pre-baked `uv` environment. |
 | `docker-compose.yml` | Docker Compose | Container configuration with 2GB shared memory and volume mounts. |
 | `docker-entrypoint.sh` | Container Init | Sourcing guard for OpenFOAM `bashrc` and permission setup. |
 | `pyproject.toml` | Python (`uv`) | Standard PEP 621 dependencies (`numpy`, `pandas`, `matplotlib`, `foamlib`). |
-| `.env.example` | Configuration | Template for user settings (`PARAVIEW_PATH`, `HOST_UID`, `HOST_GID`). |
+| `.env.example` | Configuration | Template for user host permissions (`HOST_UID`, `HOST_GID`). |
 | `.gitattributes` | Git | Enforces Linux LF (`\n`) line endings across all platforms. |
 | `.gitignore` | Git | Ignores local `.env` and temporary files while tracking `test_cavity/`. |
 | `openfoam_course_workspace/` | Shared Storage | Your simulation projects folder (accessible from host and Docker). |
@@ -100,7 +97,7 @@ ParaView is the industry-standard open-source 3D scientific visualization softwa
 * **Download:** [https://www.paraview.org/download/](https://www.paraview.org/download/)
 * **Recommended version:** Download the latest stable release (e.g., ParaView 5.12 or 5.13 for Windows/macOS).
 * **Installation notes:**
-  * **Windows:** Install into the default location (`C:\Program Files\ParaView...`). Our launcher scripts will automatically find it.
+  * **Windows:** Install into the default location (`C:\Program Files\ParaView...`).
   * **macOS:** Drag `ParaView.app` into your `/Applications` folder.
 
 ---
@@ -119,7 +116,7 @@ Follow these 4 simple steps to run your first OpenFOAM simulation:
   ./start_openfoam.sh
   ```
 
-> The script will check that Docker is running, auto-detect ParaView, build the container image, and drop you directly into an interactive bash prompt inside `/workspace`:
+> The script will check that Docker is running, build the container image, and drop you directly into an interactive bash prompt inside `/workspace`:
 > ```text
 > root@openfoam_course:/workspace#
 > ```
@@ -153,26 +150,25 @@ The semi-log plot displays the initial residuals of velocity ($U_x$, $U_y$) and 
 
 ---
 
-### Step 4: Visualize 3D Velocity & Pressure in ParaView
+### Step 4: Visualize 3D Velocity & Pressure in ParaView (Manual Workflow)
 
-From your host terminal (outside the container):
+Launch the **ParaView** application installed on your host computer (Windows, macOS, or Linux) and follow this standard CFD workflow:
 
-* **On Windows:**
-  ```cmd
-  open_paraview.bat
-  ```
-* **On macOS or Linux:**
-  ```bash
-  ./open_paraview.sh
-  ```
+1. **Open the Case File:**
+   In ParaView, click **File -> Open...** and navigate to your case directory:
+   ```text
+   openfoam_course_workspace/test_cavity/cavity.foam
+   ```
+   *(For any future course simulation case, select the `<case_name>.foam` file inside that case folder).*
 
-### **3-Step ParaView Visual Checklist (For Beginners):**
-1. **Click "Apply":**
-   Look at the **Properties** panel on the left side of ParaView. Notice the blue **"Apply"** button with a green checkmark icon. Click it to load the mesh into the 3D viewport.
-2. **Select Field:**
-   In the top toolbar, find the active variable dropdown (which defaults to `"Solid Color"`). Change it to **`U`** (Velocity) or **`p`** (Pressure).
-3. **Play Animation:**
-   Click the green **Play** button (triangle) in the top VCR toolbar controls. Watch the moving lid induce a recirculating flow vortex inside the square cavity!
+2. **Click "Apply":**
+   In the **Properties** panel on the left side of ParaView, click the blue **"Apply"** button with the green checkmark icon to load the computational mesh into the 3D viewport.
+
+3. **Select Field Variable:**
+   In the top toolbar, change the active display dropdown from `"Solid Color"` to **`U`** (Velocity) or **`p`** (Pressure).
+
+4. **Play Animation:**
+   Click the green **Play** button (triangle) in the top VCR toolbar controls. Watch the moving lid drive the recirculating flow vortex inside the cavity across physical time!
 
 ---
 
@@ -261,11 +257,8 @@ uv pip install scipy sympy
 ### Q1: `start_openfoam` says "Docker daemon is not running". What should I do?
 * **Solution:** Open Docker Desktop from your operating system application menu. Wait 15-30 seconds until Docker Desktop finishes starting and reports "Engine running" in green. Then re-run `start_openfoam.bat` or `./start_openfoam.sh`.
 
-### Q2: ParaView gives an error or isn't auto-detected.
-* **Solution:** Open `.env` in any text editor. Uncomment and set the exact path to your ParaView executable:
-  * Windows: `PARAVIEW_PATH="C:\Program Files\ParaView 5.12.0\bin\paraview.exe"`
-  * macOS: `PARAVIEW_PATH="/Applications/ParaView-5.12.0.app/Contents/MacOS/paraview"`
-  * Linux: `PARAVIEW_PATH="/usr/bin/paraview"`
+### Q2: How do I open any other simulation case in ParaView?
+* **Solution:** Whenever you create or solve a new case (e.g., `openfoam_course_workspace/airfoil`), ensure there is an empty `.foam` file inside it (e.g., `touch airfoil.foam`). Then open ParaView on your computer, click **File -> Open...**, select that `.foam` file, and click **Apply**!
 
 ### Q3: I am on an Apple Silicon Mac (M1/M2/M3/M4). Does this run natively?
 * **Solution:** Yes! The base image `microfluidica/openfoam:latest` is built natively for `linux/arm64`. Docker runs it without Rosetta emulation overhead.
