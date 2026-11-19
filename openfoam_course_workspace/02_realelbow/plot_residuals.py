@@ -98,12 +98,13 @@ def plot_residuals(df: pd.DataFrame, output_path: str = "residuals.png") -> None
     styles = {
         "Ux": {"color": "#1f77b4", "label": "Ux (X-Velocity)", "linestyle": "-", "marker": "o"},
         "Uy": {"color": "#2ca02c", "label": "Uy (Y-Velocity)", "linestyle": "--", "marker": "s"},
+        "Uz": {"color": "#2ca02c", "label": "Uz (Z-Velocity)", "linestyle": "--", "marker": "o"},
         "p":  {"color": "#d62728", "label": "p (Pressure)",    "linestyle": "-.", "marker": "^"},
     }
 
     x_axis = df["Time"] if "Time" in df.columns else df.index
 
-    for col in ["Ux", "Uy", "p"]:
+    for col in ["Ux", "Uy", "Uz","p"]:
         if col in df.columns:
             # Filter out non-positive values to prevent log scale errors
             valid_mask = df[col] > 0
@@ -122,7 +123,7 @@ def plot_residuals(df: pd.DataFrame, output_path: str = "residuals.png") -> None
                 )
 
     # Format chart titles and axes
-    ax.set_title("OpenFOAM 2D Cavity Flow: Solver Residual Convergence", fontsize=14, fontweight="bold", pad=12)
+    ax.set_title("OpenFOAM 3D Cavity Flow: Solver Residual Convergence", fontsize=14, fontweight="bold", pad=12)
     ax.set_xlabel("Physical Time (seconds)", fontsize=12, fontweight="medium")
     ax.set_ylabel("Initial Residual (Log Scale)", fontsize=12, fontweight="medium")
 
@@ -135,21 +136,21 @@ def plot_residuals(df: pd.DataFrame, output_path: str = "residuals.png") -> None
     ax.legend(loc="upper right", frameon=True, framealpha=0.95, fontsize=10, shadow=True)
 
     # Add annotations detailing case parameters
-    info_text = (
-        "Solver: icoFoam (PISO)\n"
-        "Mesh: 20x20x1 (400 cells)\n"
-        "Reynolds Number: Re = 10\n"
-        "Time Step: deltaT = 0.005s"
-    )
-    ax.text(
-        0.02,
-        0.05,
-        info_text,
-        transform=ax.transAxes,
-        fontsize=9,
-        verticalalignment="bottom",
-        bbox=dict(boxstyle="round,pad=0.5", facecolor="#f8f9fa", edgecolor="#cccccc", alpha=0.9),
-    )
+    # info_text = (
+    #     "Solver: icoFoam (PISO)\n"
+    #     "Mesh: 20x20x1 (400 cells)\n"
+    #     "Reynolds Number: Re = 10\n"
+    #     "Time Step: deltaT = 0.005s"
+    # )
+    # ax.text(
+    #     0.02,
+    #     0.05,
+    #     info_text,
+    #     transform=ax.transAxes,
+    #     fontsize=9,
+    #     verticalalignment="bottom",
+    #     bbox=dict(boxstyle="round,pad=0.5", facecolor="#f8f9fa", edgecolor="#cccccc", alpha=0.9),
+    # )
 
     plt.tight_layout()
     plt.savefig(output_path, dpi=300)

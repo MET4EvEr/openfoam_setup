@@ -28,15 +28,16 @@ gradSchemes
 
 divSchemes
 {
-    default         none;
-    div(phi,U)      Gauss limitedLinearV 1;
+    default         Gauss linear;
+    div(phi,U)      Gauss linear;
 }
 
 laplacianSchemes
 {
-    default         none;
+    default         Gauss linear corrected;
     laplacian(nu,U) Gauss linear corrected;
     laplacian((1|A(U)),p) Gauss linear corrected;
+    laplacian(nuEff,U) Gauss linear corrected;
 }
 
 interpolationSchemes
@@ -56,5 +57,8 @@ fluxRequired
     p               ;
 }
 
-
+wallDist
+{
+    method          meshWave;
+}
 // ************************************************************************* //
