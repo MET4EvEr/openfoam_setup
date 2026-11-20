@@ -44,7 +44,9 @@ boundaryField
 
     pressure-outlet-7 
     {
-        type            zeroGradient;
+        type            inletOutlet;
+        inletValue      uniform 0.0006;
+        value           uniform 0.0006;
     }
 
 }

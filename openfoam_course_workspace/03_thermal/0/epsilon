@@ -5,47 +5,43 @@
 |   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
-FoamFile
-{
-    version     2.0;
-    format      ascii;
-    class       volScalarField;
-    object      U;
+FoamFile {
+    version 2.0;
+    format ascii;
+    class volScalarField;
+    object U;
 }
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions       [0 2 -3 0 0 0 0];
+dimensions [0 2 -3 0 0 0 0];
 
-internalField   uniform 0.14;
+internalField uniform 0.14;
 
-boundaryField
-{
-    wall          
-    {
-         type           epsilonWallFunction;
-        value           uniform 0.14;
+boundaryField {
+    wall {
+        type epsilonWallFunction;
+        value uniform 0.14;
     }
 
-    symmetry 
-    {
-        type            symmetry;
+    symmetry {
+        type symmetry;
     }
 
-    velocity-inlet-5 
-    {
-        type            fixedValue;
-        value           uniform 6.38;
+    velocity-inlet-5 {
+        type fixedValue;
+        value uniform 6.38;
     }
 
-    velocity-inlet-6 
-    {
-        type            fixedValue;
-        value           uniform 6.38;
+    velocity-inlet-6 {
+        type fixedValue;
+        value uniform 6.38;
     }
 
-    pressure-outlet-7 
-    {
-        type            zeroGradient;
+    pressure-outlet-7 {
+        type inletOutlet;
+        inletValue uniform 0.14;
+        value uniform 0.14;
     }
 
 }

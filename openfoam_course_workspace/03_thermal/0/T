@@ -5,49 +5,45 @@
 |   \\  /    A nd           | Website:  www.openfoam.com                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
-FoamFile
-{
-    version     2.0;
-    format      ascii;
-    arch        "LSB;label=32;scalar=64";
-    class       volScalarField;
-    location    "0";
-    object      T;
+FoamFile {
+    version 2.0;
+    format ascii;
+    arch "LSB;label=32;scalar=64";
+    class volScalarField;
+    location "0";
+    object T;
 }
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [0 0 0 1 0 0 0];
+dimensions [0 0 0 1 0 0 0];
 
-internalField   uniform 323;
+internalField uniform 323;
 
-boundaryField
-{
-    
- wall          
-    {
-         type            zeroGradient;
+boundaryField {
+
+    wall {
+        type zeroGradient;
     }
 
-    symmetry 
-    {
-        type            symmetry;
+    symmetry {
+        type symmetry;
     }
 
-    velocity-inlet-5 
-    {
-       type            fixedValue;
-        value           uniform 323;
+    velocity-inlet-5 {
+        type fixedValue;
+        value uniform 323;
     }
 
-    velocity-inlet-6 
-    {
-        type            fixedValue;
-        value           uniform 473;
+    velocity-inlet-6 {
+        type fixedValue;
+        value uniform 473;
     }
 
-    pressure-outlet-7 
-    {
-        type            zeroGradient;
+    pressure-outlet-7 {
+        type inletOutlet;
+        inletValue uniform 323;
+        value uniform 323;
     }
 
 }

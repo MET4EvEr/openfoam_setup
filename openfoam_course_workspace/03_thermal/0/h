@@ -30,7 +30,7 @@ boundaryField
 
     symmetry 
     {
-       type            zeroGradient;
+       type            symmetry;
     }
 
     velocity-inlet-5 
@@ -47,7 +47,9 @@ boundaryField
 
     pressure-outlet-7 
     {
-        type            zeroGradient;
+        type            inletOutlet;
+        inletValue      uniform 1351413.3;
+        value           uniform 1351413.3;
     }
 
 }
